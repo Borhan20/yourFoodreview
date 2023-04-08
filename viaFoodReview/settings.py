@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'announcement.apps.AnnouncementConfig',
     'blog.apps.BlogConfig',
     'users.apps.UsersConfig',
+    'dj-database-url',
     'crispy_forms',
     'crispy_bootstrap4',
     'django.contrib.admin',
