@@ -54,7 +54,12 @@ body {
     width: 65px;
     margin-right: 16px;
   }
-  
+  .post-img{
+    
+    height: 300px;
+    width: 600px;
+  }
+
   .article-metadata {
     padding-bottom: 1px;
     margin-bottom: 4px;

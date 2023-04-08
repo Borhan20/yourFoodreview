@@ -15,7 +15,7 @@
             <div>
               
               <div style="height: 50%; width: 100%; float: none;">
-                <img height="300px" width="600px" src="{{post.post_images.url}}">
+                <img height="auto" width="100%"  src="{{post.post_images.url}}">
                 <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
                 <p style="height: 100px; overflow: hidden; text-overflow: ellipsis;" class="article-content">{{ post.content }}</p>
                 <p><a href="{% url 'post-detail' post.id %}">[.....]</a></p> 
