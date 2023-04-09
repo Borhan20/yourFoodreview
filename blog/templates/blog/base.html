@@ -25,18 +25,20 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
+
+            <div class="mr-4">
+              <form method='GET' class="mr-4 ml-4" >
+                <input type='text' name='q' value='{{ request.GET.q }}'>
+                <input class="button" type='submit' value="Search">
+              </form>
+            </div>
             <div class="collapse navbar-collapse" id="navbarToggle">
               <div class="navbar-nav mr-auto">
                 <a class="nav-item nav-link" href="{% url 'blog-home' %}">Home</a>
                 <a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>
                 
               </div>
-              <div>
-                <form method='GET' class="mr-4" >
-                  <input type='text' name='q' value='{{ request.GET.q }}'>
-                  <input class="button" type='submit' value="Search">
-                </form>
-              </div>
+              
               <!-- Navbar Right Side -->
               <div class="navbar-nav">
                 {% if user.is_authenticated %}
@@ -105,7 +107,8 @@
                 
                   <li class="list-group-item list-group-item-light">Send Messages To Us</li>
                   <li class="list-group-item list-group-item-light">
-                    
+                    <a href="{%url 'submit-message' %}"> Go to </a>
+                  
                   </li>
                 </ul>
               </p>
