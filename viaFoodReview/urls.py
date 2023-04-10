@@ -24,6 +24,8 @@ from usermessage import views as usermessage_view
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('submit/message/',usermessage_view.submit_message,name='submit-message'),
@@ -40,6 +42,7 @@ urlpatterns = [
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
           name='password_reset_complete'),
     path('', include('blog.urls')),
+    
 ]
 
 urlpatterns+=staticfiles_urlpatterns()

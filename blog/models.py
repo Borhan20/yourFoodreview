@@ -15,6 +15,8 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+
+    
     def save(self, *args, **kwargs):
         super(Post,self).save(*args,**kwargs)
 
@@ -27,6 +29,7 @@ class Post(models.Model):
          
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
+    
 
 
 

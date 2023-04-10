@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    
     'usermessage.apps.UsermessageConfig',
     'announcement.apps.AnnouncementConfig',
     'blog.apps.BlogConfig',

@@ -26,18 +26,23 @@
             <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="mr-4">
-              <form method='GET' class="mr-4 ml-4" >
-                <input type='text' name='q' value='{{ request.GET.q }}'>
-                <input class="button" type='submit' value="Search">
-              </form>
-            </div>
+            
             <div class="collapse navbar-collapse" id="navbarToggle">
+
+              <div class="mr-4">
+                <form method='GET' class="mr-4" >
+                  <input type='text' name='q' value='{{ request.GET.q }}'>
+                  <input class="button" type='submit' value="Search">
+                </form>
+              </div>
+
               <div class="navbar-nav mr-auto">
                 <a class="nav-item nav-link" href="{% url 'blog-home' %}">Home</a>
                 <a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>
                 
               </div>
+            
+              
               
               <!-- Navbar Right Side -->
               <div class="navbar-nav">
@@ -105,9 +110,9 @@
                 </div>
                 {%endif%}
                 
-                  <li class="list-group-item list-group-item-light">Send Messages To Us</li>
+                  
                   <li class="list-group-item list-group-item-light">
-                    <a href="{%url 'submit-message' %}"> Go to </a>
+                    <a href="{%url 'submit-message' %}"> Send Message to Us </a>
                   
                   </li>
                 </ul>

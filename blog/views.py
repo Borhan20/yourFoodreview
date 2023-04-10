@@ -10,6 +10,11 @@ from django.views.generic import (ListView,
                                   )
 from .models import Post
 from django.db.models import Q
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+
+
+
 
 
 # Create your views here.
@@ -42,6 +47,17 @@ class PostListView(ListView):
     context_object_name = 'posts' 
     ordering = ['-date_posted']
     paginate_by = 5
+
+    
+    
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(PostListView, self).get_context_data(**kwargs)
+    #     for post in context['posts']:
+            
+            
+        
+    #     return context
 
     def get_queryset(self):
         query = self.request.GET.get('q')
