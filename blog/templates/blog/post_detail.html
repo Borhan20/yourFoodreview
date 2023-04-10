@@ -24,6 +24,24 @@
                 <img height="auto" width="100%" src="{{object.post_images.url}}">
                 <h2 class="article-title" >{{ object.title }}</h2>
                 <p class="article-content">{{ object.content }}</p>
+
+                {% if request.user.is_authenticated %}
+                  {% if object.id in liked_posts %}
+                      <p>You've already liked this post!</p>
+                  {% else %}
+                      <form method="POST" action="{% url 'like_post' object.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_id" value="{{ object.id }}">
+                        <input type="hidden" name="user_id" value="{{ request.user.id }}">
+                        <button type="submit" class="btn btn-outline-success">
+                          <i class="fas fa-thumbs-up"></i> Like 
+                        </button>
+                      </form>
+                    {%endif%}
+                  {%endif%}
+                  <h5 style="color: darkblue;">
+                    <span class="num-likes">{{ object.likes.count }}</span> likes
+                   </h5> 
     
             </div>
 

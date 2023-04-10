@@ -15,7 +15,18 @@ from django.http import HttpResponseRedirect
 
 
 
+from django.core import serializers
+from django.http import JsonResponse
+from .models import Like
 
+def like_post(request,pk):
+    if request.method == 'POST':
+
+        post_id = request.POST.get('post_id')
+        user_id = request.POST.get('user_id')
+        like = Like.objects.create(user_id=user_id, post_id=post_id)
+        
+        return HttpResponseRedirect(reverse('post-detail', args=[str(pk)]))
 
 # Create your views here.
 
@@ -84,6 +95,14 @@ class UserPostListView(ListView):
 class PostDetailView(DetailView):
     model = Post
     #template_name = 'blog/post_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        liked_posts = []
+        if self.request.user.is_authenticated:
+            liked_posts = [like.post.id for like in Like.objects.filter(user=self.request.user)]
+        context['liked_posts'] = liked_posts
+        return context
     
 class PostCreateView(LoginRequiredMixin,CreateView):
     model = Post

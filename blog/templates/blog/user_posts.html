@@ -17,7 +17,10 @@
                 <img height="auto" width="100%" src="{{post.post_images.url}}">
                 <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
                 <p style="height: 100px;overflow: hidden;text-overflow: ellipsis;" class="article-content">{{ post.content }}</p>
-                <p><a href="{% url 'post-detail' post.id %}">[.....]</a></p> 
+                <p><a href="{% url 'post-detail' post.id %}">[.....]</a></p>
+                <h5 style="color: darkblue;">
+                  <span class="num-likes">{{ post.likes.count }}</span> likes
+                 </h5> 
             </div> 
           </div>
         </div>
