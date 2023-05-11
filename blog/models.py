@@ -15,6 +15,11 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+    def get_last_comment(self):
+        last_comment = self.comments.filter(parent=None).order_by('-date_added').first()
+        #print(last_comment)
+        return last_comment
+    
 
     
     def save(self, *args, **kwargs):
@@ -38,3 +43,20 @@ class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
     created_at = models.DateTimeField(auto_now_add=True)
 
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    body = models.TextField()
+    parent = models.ForeignKey('self', null=True,blank=True,on_delete=models.CASCADE)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date_added']
+
+    def __str__(self):
+        return self.body
+    def get_absolute_url(self):
+        return reverse('post-detail', kwargs={'pk': self.pk})
+    
+         
+    

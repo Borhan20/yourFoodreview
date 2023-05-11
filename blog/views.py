@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404,redirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -6,7 +6,8 @@ from django.views.generic import (ListView,
                                   DetailView,
                                   CreateView,
                                   UpdateView,
-                                  DeleteView
+                                  DeleteView,
+                                  FormView
                                   )
 from .models import Post
 from django.db.models import Q
@@ -15,9 +16,31 @@ from django.http import HttpResponseRedirect
 
 
 
+
 from django.core import serializers
 from django.http import JsonResponse
-from .models import Like
+from .models import Like,Comment
+from .forms import CommentForm
+
+
+# def add_comment(request,pk):
+    
+    
+#     post = get_object_or_404(Post, pk=pk)
+    
+#     if request.method == 'POST':
+        
+#         comment_form = CommentForm(data=request.POST)
+#         if comment_form.is_valid():
+#             new_comment = comment_form.save(commit=False)
+#             new_comment.post = post
+#             new_comment.save()
+#             return redirect(reverse('post-detail',args=[str(pk)]))
+#     else:
+#         comment_form = CommentForm()
+#         return render(request,'blog/comments.html',{'form':comment_form})
+    
+
 
 def like_post(request,pk):
     if request.method == 'POST':
@@ -61,10 +84,15 @@ class PostListView(ListView):
 
     
     
-
-    # def get_context_data(self, **kwargs):
-    #     context = super(PostListView, self).get_context_data(**kwargs)
-    #     for post in context['posts']:
+    # return context
+    def get_context_data(self,  **kwargs):
+        posts = Post.objects.all()
+        context = super().get_context_data(**kwargs)
+        last_comments = [post.get_last_comment() for post in self.object_list]
+        context['post_lastcomment']= zip(posts, last_comments)
+        print(context)
+        #context['last_comments'] = last_comments
+        return context
             
             
         
@@ -86,6 +114,16 @@ class UserPostListView(ListView):
     
     paginate_by = 5
 
+        # return context
+    def get_context_data(self,  **kwargs):
+        posts = Post.objects.all()
+        context = super().get_context_data(**kwargs)
+        last_comments = [post.get_last_comment() for post in self.object_list]
+        context['post_lastcomment']= zip(posts, last_comments)
+        print(context)
+        #context['last_comments'] = last_comments
+        return context
+
     def get_queryset(self):
         user = get_object_or_404(User,username=self.kwargs.get('username'))
         return Post.objects.filter(author=user).order_by('-date_posted')
@@ -94,16 +132,63 @@ class UserPostListView(ListView):
 
 class PostDetailView(DetailView):
     model = Post
-    #template_name = 'blog/post_detail.html'
+    template_name = 'blog/post_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         liked_posts = []
         if self.request.user.is_authenticated:
             liked_posts = [like.post.id for like in Like.objects.filter(user=self.request.user)]
         context['liked_posts'] = liked_posts
+        context['comments'] = Comment.objects.filter(post=self.get_object(),parent = None)
+        #context['replies'] = Comment.objects.filter(post=self.get_object()).exclude(parent=None)
+        context['form'] = CommentForm()
         return context
     
+    def post(self, request, *args, **kwargs):
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = self.get_object()
+            comment.user = self.request.user
+            comment.save()
+            
+            
+            
+            return redirect('post-detail', pk=self.get_object().pk)
+        
+        else:
+            context = self.get_context_data(**kwargs)
+            context['form'] = form
+            return self.render_to_response(context)
+
+
+     
+                
+        
+    
+
+
+class ReplyCommentView(FormView):
+    form_class = CommentForm
+    template_name = 'blog/reply_comment.html'
+
+    def form_valid(self, form):
+        parent_comment = get_object_or_404(Comment, pk=self.kwargs['pk'])
+        comment = form.save(commit=False)
+        comment.post = parent_comment.post
+        comment.parent = parent_comment
+        comment.user = self.request.user
+        comment.save()
+        return redirect('post-detail', pk=parent_comment.post.pk)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['parent_comment'] = get_object_or_404(Comment, pk=self.kwargs['pk'])
+        return context
+
+
 class PostCreateView(LoginRequiredMixin,CreateView):
     model = Post
     fields = ['title','content','post_images']

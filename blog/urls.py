@@ -9,7 +9,9 @@ from .views import (PostListView,
                     PostCreateView,
                     PostUpdateView,
                     PostDeleteView,
-                    UserPostListView
+                    UserPostListView,
+                    ReplyCommentView,
+                
                     )
 from .views import like_post
 
@@ -21,7 +23,8 @@ urlpatterns = [
     path('post/<int:pk>/update/', PostUpdateView.as_view(),name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(),name='post-delete'),
     path('about/',views.about, name='blog-about'),
-     path('like/<int:pk>/', views.like_post, name='like_post'),
+    path('like/<int:pk>/', views.like_post, name='like_post'),
+    path('comment/<int:pk>/', ReplyCommentView.as_view(), name='reply_comment'),
     
 ]
 

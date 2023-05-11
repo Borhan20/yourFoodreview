@@ -5,7 +5,8 @@
 
 
 
-    {% for post in posts %}
+    {% for post,last_comment in post_lastcomment %} 
+      
     
 
     
@@ -25,9 +26,34 @@
                 <p style="max-height: 100px; overflow: hidden; text-overflow: ellipsis;" class="article-content">{{ post.content }}</p>
                 <p><a href="{% url 'post-detail' post.id %}">[.....]</a></p>
                 
-               <h5 style="color: darkblue;">
-                <span class="num-likes">{{ post.likes.count }}</span> likes
-               </h5> 
+                <h5 style="color: darkblue;">
+                  <span class="num-likes">{{ post.likes.count }}</span> likes
+                </h5> 
+                <p style="color: blue;">{{post.comments.count}} comments</p>
+
+                <br/>
+
+                <br/>
+                
+                
+                {% if last_comment%}
+                <p>latest comment</p>
+                  <div class="article-metadata">
+                  <img class="rounded-circle article-img" src="{{ last_comment.user.profile.image.url}}">  
+                  {{last_comment.user}}
+                  <small class="text-muted ml-2" > {{last_comment.date_added}} </small>
+                  </div>
+                  <br/>
+                  {{last_comment.body}}
+                  <br/>
+                  <br/>
+                  <a href="{% url 'post-detail' post.id %}">To see full comments</a>
+                
+                {%endif%}
+                
+
+               
+
               </div> 
             </div>
   
@@ -36,7 +62,7 @@
         </article>
 
     
-    
+      
     {% endfor %}
     
 
