@@ -27,7 +27,8 @@
 
                 {% if request.user.is_authenticated %}
                   {% if object.id in liked_posts %}
-                      <p>You've already liked this post!</p>
+                      <p style="color:darkblue;">(You've already liked this post!)</p>
+                     <h5> <strong class="num-likes" style="color: blue;">   {{ object.likes.count }}  likes</strong></h5>  
                   {% else %}
                       <form method="POST" action="{% url 'like_post' object.pk %}">
                         {% csrf_token %}
@@ -42,18 +43,23 @@
                       </form>
                     {%endif%}
                   {%endif%}
-                  <br/>
+                  
                   <h5 style="color: blue;">{{object.comments.count}} Comments...</h5>
                   <br/>
                   <br/>
                   <h5>Leave a comment</h5>
                   {% if request.user.is_authenticated %}
-                    <form method="POST">
-                      {% csrf_token %}
-                      {{ form.as_p }}
-                      <button class="btn btn-outline-info" type="submit">submit</button>
-                    </form>
-                  {% endif %}
+                        
+                        <form id="comment-form" method="POST"  action="{% url 'post-detail' object.pk %}">
+                            {% csrf_token %}
+                            <div class="form-group comment-text">
+                                {{form.body}}
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Submit</button>
+                        </form>
+                    {% else %}
+                        <p><a href="{% url 'login' %}">Log in</a> to add a comment.</p>
+                    {% endif %}
 
                    <br>
                    <br>
@@ -66,6 +72,7 @@
                     {% else %}
 
                     <br/>
+                    <div id="comments">
                       {% for comment in comments%}
                       <br/>
                       <br/>
@@ -79,7 +86,7 @@
                         {{comment.body}}
                         <br/>
                         <br/>
-                        <a href="{% url 'reply_comment' comment.pk %}">Reply</a>
+                        <a class="reply-comment-form" href="{% url 'reply_comment' comment.pk %}">Reply</a>
                         {% for reply in comment.comment_set.all%}
                           <br/>
                           <br/>
@@ -95,69 +102,66 @@
                           </div>
 
                       </div>
-                        
+                    </div>
                           {%empty%}
                           {%endfor%}
                       {% endfor %}
                     {% endif %}
                     
 
-                    <!-- {% if request.user.is_authenticated %}
-                        
-                        <form id="comment-form" method="post"  action="{% url 'post-detail' object.id %}">
-                            {% csrf_token %}
-                            <div class="form-group">
-                                {{form.body}}
-                            </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </form>
-                    {% else %}
-                        <p><a href="{% url 'login' %}">Log in</a> to add a comment.</p>
-                    {% endif %} -->
+                    
 
-                    <!-- <script type="text/JavaScript">
-                      $(document).on('submit', #comment-form, function name(event) {
+
+                    
+                    
+                    
+                  <script>
+                    $(document).ready(function(){
+                      $('#comment-form').submit(function(event){
+                        event.preventDefault()
+
+                        var formData = $(this).serialize();
+                        var url = $(this).attr('action');
+                        console.log(url);
                         
-                      
-                          
-                              event.preventDefault();
-                              var formData = $(this).serialize();
-                              var url = $(this).attr('action');
-                              $.ajax({
-                                  type: 'POST',
-                                  url: url,
-                                  data: formData,
-                                  dataType: 'json'
-                                  success: function(data) {
-                                    
-                                      $('#comments').prepend(
-                                          '<div class="article-metadata">' +
-                                              
-                                              '<div class="">' +
-                                                  data.user + ' <span class="text-muted">- ' + data.date_added + '</span>' +
-                                              '</div>' +
-                                              '<div >' +
-                                                  '<p >' + data.body+ '</p>' +
-                                              '</div>' +
-                                          '</div>'
-                                      );
-                                      $('#comment-form')[0].reset();
-                                      $('#message').removeClass('alert-danger').addClass('alert-success').text(response.message).show();
-                                  },
-                                  error: function(response) {
-                                      $('#message').removeClass('alert-success').addClass('alert-danger').text(response.responseJSON.message).show();
-                                  }
-                              });
-                          
+                        $.ajax({
+                            type: 'POST',
+                            url: url,
+                            data: formData, 
+                            dataType:'json',
+                            
+                            success: function(response) {
+                              console.log(formData);
+                              console.log(response);
+                              console.log(response.comment_id);
+                              // Define the reply_comment URL here
+                              
+                              $("#comment-form").trigger("reset");
+                              if(response.bool==true){
+                                $('.comment-text').val('');
+                              }
+                                $('#comments').prepend(
+                                    '<div>' +
+                                        '<div class="article-metadata">' +'<img class="rounded-circle article-img" src="{{ request.user.profile.image.url}}">'+
+                                            response.user + ' <small class="text-muted">  ' + response.date_added + '</small>' +
+                                        '</div>' +
+                                        '<div >' +
+                                            '<p >' + response.body + '</p>' +
+                                        '</div>' +'<br/>'+
+                                        '<a href ="'+response.reply_url+'">'+'Reply'+'</a>'+
+                                    '</div>'
+                                );
+                                
+                            },
+                            error: function(response) {
+                                console.log('Error:', response);
+                            },
+                        });
                       });
-                  </script> -->
+                    });
+                  </script>
 
-                    <!-- Optional JavaScript -->
-                    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-                    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" crossorigin="anonymous"></script>
-                    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" crossorigin="anonymous"></script>
-
+                  
 
 
 

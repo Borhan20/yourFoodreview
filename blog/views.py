@@ -39,16 +39,19 @@ from .forms import CommentForm
 #     else:
 #         comment_form = CommentForm()
 #         return render(request,'blog/comments.html',{'form':comment_form})
-    
+from django.contrib.auth.decorators import login_required   
 
-
+@login_required
 def like_post(request,pk):
     if request.method == 'POST':
 
         post_id = request.POST.get('post_id')
         user_id = request.POST.get('user_id')
         like = Like.objects.create(user_id=user_id, post_id=post_id)
-        
+        likes_count = object.like_set.count()
+
+        #return JsonResponse({'likes_count': likes_count})
+
         return HttpResponseRedirect(reverse('post-detail', args=[str(pk)]))
 
 # Create your views here.
@@ -153,12 +156,25 @@ class PostDetailView(DetailView):
             comment.post = self.get_object()
             comment.user = self.request.user
             comment.save()
+           
+            url = reverse('reply_comment', args=[comment.id])
+            
+            data = {
+                'bool': True,
+                'user': comment.user.username,
+                'body': comment.body,
+                'date_added': comment.date_added.strftime('%b %d, %Y %I:%M %p'),
+                'reply_url':url,
+            }
+            return JsonResponse(data)
             
             
             
-            return redirect('post-detail', pk=self.get_object().pk)
+            # return redirect('post-detail', pk=self.get_object().pk)
         
         else:
+
+            # return JsonResponse({'message': 'Invalid request.'}, status=400)
             context = self.get_context_data(**kwargs)
             context['form'] = form
             return self.render_to_response(context)
@@ -166,7 +182,8 @@ class PostDetailView(DetailView):
 
      
                 
-        
+    
+
     
 
 
