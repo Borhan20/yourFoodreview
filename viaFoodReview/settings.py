@@ -22,7 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-pul8)%r2b8qi_(n=f0)i(*g=hff^e095_jas(nm*uaur_yue%c'
+#SECRET_KEY = 'django-insecure-pul8)%r2b8qi_(n=f0)i(*g=hff^e095_jas(nm*uaur_yue%c'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -152,6 +153,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST ='smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'viafoodreview@gmail.com'
-EMAIL_HOST_PASSWORD = 'tytoaxgvnjlpwqyo'
+EMAIL_HOST_USER = os.environ.get('EMAIL_URL')
+EMAIL_HOST_PASSWORD = os.environ.get('PASS_URL')
+# EMAIL_HOST_USER = 'viafoodreview@gmail.com'
+# EMAIL_HOST_PASSWORD = 'lhgvpkhitbjjcool'
 DEFAULT_FROM_EMAIL = 'Coding with weak team <no reply@weakteam.com>'
