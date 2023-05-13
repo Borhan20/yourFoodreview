@@ -66,3 +66,8 @@ class Comment(models.Model):
     
          
     
+class About(models.Model):
+    about_text = models.TextField()
+
+    def __str__(self):
+        return self.about_text

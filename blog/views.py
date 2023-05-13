@@ -9,7 +9,7 @@ from django.views.generic import (ListView,
                                   DeleteView,
                                   FormView
                                   )
-from .models import Post
+from .models import Post,About
 from django.db.models import Q
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -255,5 +255,6 @@ class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
 
 
 def about(request):
-    return render(request,'blog/about.html',{'title':'About'})
+    print(About.objects.first())
+    return render(request,'blog/about.html',{'about_text':About.objects.first()})
 
