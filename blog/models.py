@@ -15,6 +15,9 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+    def get_likes_count(self):
+        return self.likes.count()
+    
     def get_last_comment(self):
         last_comment = self.comments.filter(parent=None).order_by('-date_added').first()
         #print(last_comment)

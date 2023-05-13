@@ -44,15 +44,24 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def like_post(request,pk):
     if request.method == 'POST':
-
+        post = get_object_or_404(Post,pk=pk)
         post_id = request.POST.get('post_id')
         user_id = request.POST.get('user_id')
+        print(post_id)
+        print(user_id)
         like = Like.objects.create(user_id=user_id, post_id=post_id)
-        likes_count = object.like_set.count()
+        likes_count = post.get_likes_count()
 
-        #return JsonResponse({'likes_count': likes_count})
+        # print(likes_count)
 
-        return HttpResponseRedirect(reverse('post-detail', args=[str(pk)]))
+        data ={
+            'likes_count':likes_count,
+            'message':'(you have already liked it)',
+        }
+
+        return JsonResponse(data)
+
+        #return HttpResponseRedirect(reverse('post-detail', args=[str(pk)]))
 
 # Create your views here.
 

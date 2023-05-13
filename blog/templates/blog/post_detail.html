@@ -1,4 +1,5 @@
 {% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
 {% block content%}
 
 
@@ -20,20 +21,20 @@
         </div>
         <div style="height: 50%; width: 100%; float: none;">
 
-            <div>
+            
                 <img height="auto" width="100%" src="{{object.post_images.url}}">
                 <h2 class="article-title" >{{ object.title }}</h2>
                 <p class="article-content">{{ object.content }}</p>
-
+                  <div id="likes">
                 {% if request.user.is_authenticated %}
                   {% if object.id in liked_posts %}
                       <p style="color:darkblue;">(You've already liked this post!)</p>
                      <h5> <strong class="num-likes" style="color: blue;">   {{ object.likes.count }}  likes</strong></h5>  
                   {% else %}
-                      <form method="POST" action="{% url 'like_post' object.pk %}">
+                      <form id="like-form" method="POST" action="{% url 'like_post' object.pk %}">
                         {% csrf_token %}
-                        <input type="hidden" name="post_id" value="{{ object.id }}">
-                        <input type="hidden" name="user_id" value="{{ request.user.id }}">
+                        <input type="hidden" id="post_id" name="post_id" value="{{ object.id }}">
+                        <input type="hidden" id="user_id" name="user_id" value="{{ request.user.id }}">
                         <button type="submit" class="btn btn-outline-success">
                           <i class="fas fa-thumbs-up"></i> Like 
                         </button>
@@ -41,22 +42,24 @@
                        <strong class="num-likes" style="color: blue;margin-left: 0.5cm;">   {{ object.likes.count }}  likes</strong>   
                          
                       </form>
+                      <br/>
                     {%endif%}
                   {%endif%}
-                  
+                  </div>
                   <h5 style="color: blue;">{{object.comments.count}} Comments...</h5>
                   <br/>
                   <br/>
-                  <h5>Leave a comment</h5>
+                  <h5>Leave a comment: </h5>
                   {% if request.user.is_authenticated %}
-                        
+
                         <form id="comment-form" method="POST"  action="{% url 'post-detail' object.pk %}">
                             {% csrf_token %}
                             <div class="form-group comment-text">
-                                {{form.body}}
+                                {{form | crispy }}
                             </div>
                             <button type="submit" class="btn btn-secondary">Submit</button>
                         </form>
+                       
                     {% else %}
                         <p><a href="{% url 'login' %}">Log in</a> to add a comment.</p>
                     {% endif %}
@@ -101,7 +104,7 @@
                             
                           </div>
 
-                      </div>
+                      
                     </div>
                           {%empty%}
                           {%endfor%}
@@ -116,7 +119,61 @@
                     
                     
                   <script>
+
+                    //this portion is for like react
+
+                    
+
+
+
+
+
+
+
+
+
+
+                    // this portion is for comment
                     $(document).ready(function(){
+
+                      $('#like-form').submit(function(event){
+                        event.preventDefault()
+
+                        var post_id = $('#post_id').val();
+                        var user_id = $('#user_id').val();
+                        var url = $(this).attr('action');
+                        console.log(url);
+                        
+                        $.ajax({
+                            type: 'POST',
+                            url: url,
+                            data: {
+                              post_id: post_id,
+                              user_id: user_id,
+                              csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                            },
+                            dataType:'json',
+                            
+                            success: function(response) {
+                              
+                              console.log(response);
+                              
+                              $("#like-form").hide();
+                              
+                                $('#likes').append(
+                                    '<div>' +
+                                      '<p style="color:darkblue;">'+ response.message+'</p>'+
+                                      '<h5>'+ '<strong class="num-likes" style="color: blue;">'+ response.likes_count+' likes'+'</strong>'+'</h5>'+
+                                    '</div>'
+                                );
+                                
+                            },
+                            error: function(response) {
+                                console.log('Error:', response);
+                            },
+                        });
+                      });
+
                       $('#comment-form').submit(function(event){
                         event.preventDefault()
 
@@ -131,9 +188,8 @@
                             dataType:'json',
                             
                             success: function(response) {
-                              console.log(formData);
+
                               console.log(response);
-                              console.log(response.comment_id);
                               // Define the reply_comment URL here
                               
                               $("#comment-form").trigger("reset");
