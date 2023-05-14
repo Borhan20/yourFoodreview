@@ -174,6 +174,7 @@ class PostDetailView(DetailView):
                 'body': comment.body,
                 'date_added': comment.date_added.strftime('%b %d, %Y %I:%M %p'),
                 'reply_url':url,
+                'comments_count':self.get_object().comments.count(),
             }
             return JsonResponse(data)
             
@@ -183,10 +184,10 @@ class PostDetailView(DetailView):
         
         else:
 
-            # return JsonResponse({'message': 'Invalid request.'}, status=400)
-            context = self.get_context_data(**kwargs)
-            context['form'] = form
-            return self.render_to_response(context)
+             return JsonResponse({'message': 'Invalid request.'}, status=400)
+            # context = self.get_context_data(**kwargs)
+            # context['form'] = form
+            # return self.render_to_response(context)
 
 
      
@@ -218,6 +219,7 @@ class ReplyCommentView(FormView):
 class PostCreateView(LoginRequiredMixin,CreateView):
     model = Post
     fields = ['title','content','post_images']
+    
 
     
     
@@ -225,7 +227,9 @@ class PostCreateView(LoginRequiredMixin,CreateView):
         form.instance.author = self.request.user
         post = form.save(commit=False)
         post.save()
+        print(post)
         return super().form_valid(form)
+        
 
 class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model = Post

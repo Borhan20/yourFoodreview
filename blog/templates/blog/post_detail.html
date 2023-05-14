@@ -19,6 +19,7 @@
                 
             {% endif %}
         </div>
+        <div>
         <div style="height: 50%; width: 100%; float: none;">
 
             
@@ -46,8 +47,8 @@
                     {%endif%}
                   {%endif%}
                   </div>
-                  <h5 style="color: blue;">{{object.comments.count}} Comments...</h5>
-                  <br/>
+                  
+
                   <br/>
                   <h5>Leave a comment: </h5>
                   {% if request.user.is_authenticated %}
@@ -66,20 +67,24 @@
 
                    <br>
                    <br>
-                   
+
+                    <h5 id="comment-count" style="color: blue;">{{object.comments.count}} Comments...</h5>
+                    
                    
                     {% if not object.comments.all %}
-                      No Comments Yet
+                     <p id="no-comments">No Comments Yet</p> 
                   
-                    </a>
+                    
                     {% else %}
 
-                    <br/>
+                    
                     <div id="comments">
+                      
                       {% for comment in comments%}
+                      
                       <br/>
                       <br/>
-                      <div>
+                      
                         <div class="article-metadata">
                           <img class="rounded-circle article-img" src="{{ comment.user.profile.image.url}}">  
                           {{comment.user}}
@@ -90,6 +95,7 @@
                         <br/>
                         <br/>
                         <a class="reply-comment-form" href="{% url 'reply_comment' comment.pk %}">Reply</a>
+                        
                         {% for reply in comment.comment_set.all%}
                           <br/>
                           <br/>
@@ -103,12 +109,15 @@
                             {{reply.body}}
                             
                           </div>
-
-                      
-                    </div>
                           {%empty%}
                           {%endfor%}
-                      {% endfor %}
+                          <br/>
+                        {%empty%}
+                        {% endfor %}
+                    </div>
+                          
+                          
+
                     {% endif %}
                     
 
@@ -156,7 +165,7 @@
                             
                             success: function(response) {
                               
-                              console.log(response);
+                              // console.log(response);
                               
                               $("#like-form").hide();
                               
@@ -179,7 +188,7 @@
 
                         var formData = $(this).serialize();
                         var url = $(this).attr('action');
-                        console.log(url);
+                        // console.log(url);
                         
                         $.ajax({
                             type: 'POST',
@@ -189,21 +198,20 @@
                             
                             success: function(response) {
 
-                              console.log(response);
+                              // console.log(response);
                               // Define the reply_comment URL here
-                              
+                              $("#comment-count").remove();
+                              $("#no-comments").remove();
                               $("#comment-form").trigger("reset");
-                              if(response.bool==true){
-                                $('.comment-text').val('');
-                              }
-                                $('#comments').prepend(
-                                    '<div>' +
+                              
+                                $('#comment-form').append(
+                                    '<div>' +'<br/>'+'<br/>'+ '<h5 style="color:blue;">'+response.comments_count+ ' commments...'+ '</h5>'+'<br/>'+'<br/>'+
                                         '<div class="article-metadata">' +'<img class="rounded-circle article-img" src="{{ request.user.profile.image.url}}">'+
                                             response.user + ' <small class="text-muted">  ' + response.date_added + '</small>' +
                                         '</div>' +
-                                        '<div >' +
+                                        '<div >' +'<br/>'+
                                             '<p >' + response.body + '</p>' +
-                                        '</div>' +'<br/>'+
+                                        '</div>' +
                                         '<a href ="'+response.reply_url+'">'+'Reply'+'</a>'+
                                     '</div>'
                                 );
