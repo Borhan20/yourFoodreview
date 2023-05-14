@@ -67,18 +67,22 @@
 
                    <br>
                    <br>
-
+                  
                     <h5 id="comment-count" style="color: blue;">{{object.comments.count}} Comments...</h5>
-                    
-                   
+                  
+
+
+
+                  <div id="append-comments">
                     {% if not object.comments.all %}
                      <p id="no-comments">No Comments Yet</p> 
                   
                     
                     {% else %}
-
                     
-                    <div id="comments">
+                    
+                    
+
                       
                       {% for comment in comments%}
                       
@@ -204,8 +208,8 @@
                               $("#no-comments").remove();
                               $("#comment-form").trigger("reset");
                               
-                                $('#comment-form').append(
-                                    '<div>' +'<br/>'+'<br/>'+ '<h5 style="color:blue;">'+response.comments_count+ ' commments...'+ '</h5>'+'<br/>'+'<br/>'+
+                                $('#append-comments').prepend(
+                                    '<div>' + '<h5 id="comment-count" style="color:blue;">'+response.comments_count+ ' commments...'+ '</h5>'+'<br/>'+'<br/>'+
                                         '<div class="article-metadata">' +'<img class="rounded-circle article-img" src="{{ request.user.profile.image.url}}">'+
                                             response.user + ' <small class="text-muted">  ' + response.date_added + '</small>' +
                                         '</div>' +
