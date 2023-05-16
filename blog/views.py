@@ -159,6 +159,7 @@ class PostDetailView(DetailView):
         return context
     
     def post(self, request, *args, **kwargs):
+
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
@@ -175,6 +176,9 @@ class PostDetailView(DetailView):
                 'date_added': comment.date_added.strftime('%b %d, %Y %I:%M %p'),
                 'reply_url':url,
                 'comments_count':self.get_object().comments.count(),
+                'comment_id':comment.id,
+                
+                
             }
             return JsonResponse(data)
             
@@ -198,17 +202,53 @@ class PostDetailView(DetailView):
 
 
 class ReplyCommentView(FormView):
+    model = Comment
     form_class = CommentForm
-    template_name = 'blog/reply_comment.html'
+    template_name = 'blog/post_detail.html'
 
-    def form_valid(self, form):
-        parent_comment = get_object_or_404(Comment, pk=self.kwargs['pk'])
-        comment = form.save(commit=False)
-        comment.post = parent_comment.post
-        comment.parent = parent_comment
-        comment.user = self.request.user
-        comment.save()
-        return redirect('post-detail', pk=parent_comment.post.pk)
+    def post(self, request, *args, **kwargs):
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            parent_comment = get_object_or_404(Comment, pk=self.kwargs['pk'])
+            comment = form.save(commit=False)
+            comment.post = parent_comment.post
+            comment.parent = parent_comment
+            comment.user = self.request.user
+            comment.save()
+           
+            
+            
+            new_comment = {
+                'user': comment.user.username,
+                'body': comment.body,
+                'date_added': comment.date_added.strftime('%b %d, %Y %I:%M %p')
+            }
+            return JsonResponse(new_comment)
+            
+            
+            
+            # return redirect('post-detail', pk=self.get_object().pk)
+        
+        else:
+
+             return JsonResponse({'message': 'Invalid request.'}, status=400)
+
+    # def form_valid(self, form):
+    #     parent_comment = get_object_or_404(Comment, pk=self.kwargs['pk'])
+    #     comment = form.save(commit=False)
+    #     comment.post = parent_comment.post
+    #     comment.parent = parent_comment
+    #     comment.user = self.request.user
+    #     comment.save()
+
+    #     new_comment = {
+    #         'user': comment.user.username,
+    #         'body': comment.body,
+    #         'parent':comment.parent,
+    #         'date_added': comment.date_added.strftime('%b %d, %Y %I:%M %p')
+    #     }
+    #     return JsonResponse(new_comment)
+        # return redirect('post-detail', pk=parent_comment.post.pk)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

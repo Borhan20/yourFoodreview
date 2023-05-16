@@ -98,13 +98,33 @@
                         {{comment.body}}
                         <br/>
                         <br/>
-                        <a class="reply-comment-form" href="{% url 'reply_comment' comment.pk %}">Reply</a>
+                        <button class="btn-secondary reply-comment"  data-comment-id="{{comment.pk}}">Reply</button>
+
                         
+                          
+                          {% if request.user.is_authenticated %}
+                              <form class="reply-form" action="{% url 'reply_comment' comment.pk %}" style="margin-left:1cm;display:none" method="POST" id="reply-comment-form-{{comment.pk}}" enctype="multipart/form-data">
+                                  {% csrf_token %}
+                                  <fieldset class="form-group">
+                                      
+                                      {{form | crispy}}
+                  
+                                  </fieldset>
+                                  <div class="form-group">
+                                      <button class="btn btn-secondary" type="submit">submit</button>
+                  
+                                  </div>
+                              </form>
+                          {% else %}
+                          <p><a href="{% url 'login' %}">Log in</a> to add a comment.</p>
+                          {%endif%} 
+
+                        <div style="margin-left: 1cm;" id="append-reply">
                         {% for reply in comment.comment_set.all%}
                           <br/>
                           <br/>
-                          <div style="margin-left: 1cm;">
-                            <div class="article-metadata" >
+                          
+                            <div class="article-metadata "  >
                               <img class="rounded-circle article-img" src="{{ reply.user.profile.image.url}}">
                               {{reply.user}}
                               <small class="text-muted ml-2" >{{reply.date_added}}</small>
@@ -112,9 +132,10 @@
                             <br/>
                             {{reply.body}}
                             
-                          </div>
+                          
                           {%empty%}
                           {%endfor%}
+                        </div>
                           <br/>
                         {%empty%}
                         {% endfor %}
@@ -189,7 +210,7 @@
 
                       $('#comment-form').submit(function(event){
                         event.preventDefault()
-
+                        
                         var formData = $(this).serialize();
                         var url = $(this).attr('action');
                         // console.log(url);
@@ -202,12 +223,15 @@
                             
                             success: function(response) {
 
+                              
+                              
+
                               // console.log(response);
                               // Define the reply_comment URL here
                               $("#comment-count").remove();
                               $("#no-comments").remove();
                               $("#comment-form").trigger("reset");
-                              
+                              console.log(response)
                                 $('#append-comments').prepend(
                                     '<div>' + '<h5 id="comment-count" style="color:blue;">'+response.comments_count+ ' commments...'+ '</h5>'+'<br/>'+'<br/>'+
                                         '<div class="article-metadata">' +'<img class="rounded-circle article-img" src="{{ request.user.profile.image.url}}">'+
@@ -216,9 +240,94 @@
                                         '<div >' +'<br/>'+
                                             '<p >' + response.body + '</p>' +
                                         '</div>' +
-                                        '<a href ="'+response.reply_url+'">'+'Reply'+'</a>'+
+                                        '<button class="btn-secondary reply-comment"  data-comment-id="'+response.comment_id+'">Reply</button>'+
+                                        '{% if request.user.is_authenticated %}'+
+                                            '<form class="reply-form" action="'+response.reply_url+'" style="margin-left:1cm;display:none" method="POST" id="reply-comment-form-{{'+ response.comment_id+'}}" enctype="multipart/form-data">'+
+                                                
+                                                '<fieldset class="form-group">'+
+                                                    
+                                                  '<input type="text" id="dynamic_reply" name="dynamic_reply">'+
+                                
+                                                '</fieldset>'+
+                                                '<div class="form-group">'+
+                                                    '<button class="btn btn-secondary" type="submit">submit</button>'+
+                                
+                                                '</div>'+
+                                            '</form>'+
+                                            '<div class="reply-form-container"></div>' + 
+                                        '{% else %}'+
+                                        '<p><a href="{% url "login" %}">Log in</a> to reply comment</p>'+
+                                        '{%endif%}'+ 
                                     '</div>'
                                 );
+                                
+                                // Hide any previously shown reply forms
+                                
+                                    
+                                    var commentId = response.comment_id
+                                    
+                                    var replyForm = $('#reply-comment-form-' + commentId);
+                                    replyForm.toggle();
+                                
+
+                              // Show the reply form for the newly added comment
+                              // var replyForm = '<div class="reply-form">' +
+                              //                      +
+                              //                 '</div>';
+                              // $('#reply-comment-form[data-parentid="' + response.comment_id + '"]').append(replyForm);
+                            },
+                            error: function(response) {
+                                console.log('Error:', response);
+                            },
+                        });
+                      });
+
+                      $('.reply-comment').click(function (event) {
+                        event.preventDefault();
+                        var commentId = $(this).data('comment-id');
+
+                        var replyForm = $('#reply-comment-form-' + commentId);
+                        replyForm.toggle();
+                          
+                          
+                      });
+
+                      $('.reply-form').submit(function(event){
+                        event.preventDefault()
+                        var form = $(this);
+                        var formData = $(this).serialize();
+                        var url = $(this).attr('action');
+                        console.log(url);
+                        console.log(formData);
+                        
+                        $.ajax({
+                            type: 'POST',
+                            url: url,
+                            data: formData, 
+                            dataType:'json',
+                            
+                            success: function(response) {
+
+                              // console.log(response);
+                              // Define the reply_comment URL here
+                              
+                              console.log(response);
+                              
+                              $('#append-reply').prepend(
+                                '<br/>'+
+                                '<br/>'+
+                                '<div>'+
+                                  '<div class="article-metadata " id="append-reply" >'+
+                                    '<img class="rounded-circle article-img" src="{{ request.user.profile.image.url}}">'+
+                                    response.user+
+                                    '<small class="text-muted ml-2" >response.date_added</small>'+
+                                  '</div>'+
+                                  '<br/>'+
+                                  response.body+
+                                  
+                                '</div>'
+                                );
+                                form.trigger("reset");
                                 
                             },
                             error: function(response) {
@@ -226,6 +335,7 @@
                             },
                         });
                       });
+
                     });
                   </script>
 
