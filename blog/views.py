@@ -100,9 +100,9 @@ class PostListView(ListView):
     def get_context_data(self,  **kwargs):
         posts = Post.objects.all()
         context = super().get_context_data(**kwargs)
-        last_comments = [post.get_last_comment() for post in self.object_list]
+        last_comments = [post.comments.filter(parent=None).order_by('-date_added').first() for post in self.object_list]
         context['post_lastcomment']= zip(posts, last_comments)
-        print(context)
+        #print(context)
         #context['last_comments'] = last_comments
         return context
             
@@ -112,8 +112,17 @@ class PostListView(ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
+        
         if query:
-            object_list = self.model.objects.filter(Q(title__icontains=query) | Q(content__icontains = query)).order_by('-date_posted')
+            
+            object_list = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains = query)).order_by('-date_posted')
+            
+            
+            # context = [ post.comments.filter(parent=None).order_by('-date_added').first() for post in object_list]
+            # print(context)
+            
+            # return context
+            
         else:
             object_list = self.model.objects.filter().order_by('-date_posted')
         return object_list
@@ -130,7 +139,7 @@ class UserPostListView(ListView):
     def get_context_data(self,  **kwargs):
         posts = Post.objects.all()
         context = super().get_context_data(**kwargs)
-        last_comments = [post.get_last_comment() for post in self.object_list]
+        last_comments = [post.comments.filter(parent=None).order_by('-date_added').first() for post in self.object_list]
         context['post_lastcomment']= zip(posts, last_comments)
         print(context)
         #context['last_comments'] = last_comments

@@ -3,7 +3,7 @@
 {% block content%}
     <h1 class="mb-3">Posts by {{view.kwargs.username}}({{page_obj.paginator.count}})</h1>
 
-    {% for post,last_comment in post_lastcomment %}
+    {% for post in posts%}
     
     <article class="media content-section">
       <img class="rounded-circle article-img" src="{{ post.author.profile.image.url}}">  
@@ -17,7 +17,7 @@
             <div style="height: 50%; width: 100%; float: none;">
                 <img height="auto" width="100%" src="{{post.post_images.url}}">
                 <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-                <p style="max-height: 100px; overflow: hidden; text-overflow: ellipsis;" class="article-content">{{ post.content }}</p>
+                <p style="max-height: 150px; overflow: hidden; text-overflow: ellipsis;" class="article-content">{{ post.content }}</p>
                 <p><a href="{% url 'post-detail' post.id %}">[.....]</a></p>
                 <h5 style="color: darkblue;">
                   <span class="num-likes">{{ post.likes.count }}</span> likes
@@ -27,7 +27,7 @@
                  
                  <br/>
                  
-                 {% if last_comment%}
+                 <!-- {% if last_comment%}
                   <p>latest comment</p>
                    <div class="article-metadata">
                    <img class="rounded-circle article-img" src="{{ last_comment.user.profile.image.url}}">  
@@ -40,7 +40,7 @@
                    <br/>
                    <a href="{% url 'post-detail' post.id %}">To see full comments</a>
                  
-                 {%endif%}
+                 {%endif%} -->
 
             </div> 
           </div>
