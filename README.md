@@ -20,7 +20,14 @@
     <br>
 
   <p style="color:gray;">Here below is the Youtube link Which describe the feature We made</p>
-  <a href="https://www.youtube.com/watch?v=jY_JEfVR3X0&ab_channel=ShaniulShanto"> ViaFoodreview </a>
+  <a href="https://www.youtube.com/watch?v=jY_JEfVR3X0&ab_channel=ShaniulShanto"> ViaFoodreview </a> 
+  <br>
+  <br>
+  <br>
+  <p>For Using the project, open terminal in the project directory install requirements using the command'pip install -r requirements.txt'</p>
+  <p>Then run the project using in terminal command 'python manage.py runserver'</p>
+  
+
 
 
 </body>
