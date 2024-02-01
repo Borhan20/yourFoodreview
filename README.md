@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>  
-<h1>yourFoodreview</</h1>
+<h1>yourFoodreview</h1>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
