@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 import email
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,20 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-pul8)%r2b8qi_(n=f0)i(*g=hff^e095_jas(nm*uaur_yue%c'
-#SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
-
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    
     'usermessage.apps.UsermessageConfig',
     'announcement.apps.AnnouncementConfig',
     'blog.apps.BlogConfig',
@@ -80,7 +75,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'announcement.context_processors.message_processor',
-                
+                'usermessage.context_processors.message_processor'
             ],
         },
     },
@@ -92,15 +87,13 @@ WSGI_APPLICATION = 'viaFoodReview.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
-    'default':dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -153,8 +146,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST ='smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_URL')
-EMAIL_HOST_PASSWORD = os.environ.get('PASS_URL')
-# EMAIL_HOST_USER = 'viafoodreview@gmail.com'
-# EMAIL_HOST_PASSWORD = 'lhgvpkhitbjjcool'
+EMAIL_HOST_USER = 'viafoodreview@gmail.com'
+EMAIL_HOST_PASSWORD = 'tytoaxgvnjlpwqyo'
 DEFAULT_FROM_EMAIL = 'Coding with weak team <no reply@weakteam.com>'
