@@ -1,7 +1,6 @@
 from django import forms
-from .models import Message
+from .models import UserMessage
+from django.contrib.auth.forms import UserCreationForm
 
-class MessageForm(forms.ModelForm):
-    class Meta:
-        model = Message
-        fields = ['text']
+
+

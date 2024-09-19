@@ -2,15 +2,9 @@
 {% extends "blog/base.html" %}
 {% block content%}
 
-
-
-
-    {% for post in posts %} 
-      
+    {% for post in posts %}
     
-
-    
-      <article  class="media content-section">
+      <article class="media content-section">
         <img class="rounded-circle article-img" src="{{ post.author.profile.image.url}}">  
         <div class="media-body">
             
@@ -21,39 +15,10 @@
             <div>
               
               <div style="height: 50%; width: 100%; float: none;">
-                <img height="auto" width="100%"  src="{{post.post_images.url}}">
+                <img height="300px" width="600px" src="{{post.post_images.url}}">
                 <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-                <p style="max-height: 150px; overflow: hidden; text-overflow: ellipsis;" class="article-content">{{ post.content }}</p>
-                <p><a href="{% url 'post-detail' post.id %}">Details.....</a></p>
-                
-                <h5 style="color: darkblue;">
-                  <span class="num-likes">{{ post.likes.count }}</span> likes
-                </h5> 
-                <p style="color: blue;">{{post.comments.count}} comments</p>
-
-                <br/>
-
-                <br/>
-                
-                
-                <!-- {% if last_comment%}
-                <p>latest comment</p>
-                  <div class="article-metadata">
-                  <img class="rounded-circle article-img" src="{{ last_comment.user.profile.image.url}}">  
-                  {{last_comment.user}}
-                  <small class="text-muted ml-2" > {{last_comment.date_added}} </small>
-                  </div>
-                  <br/>
-                  {{last_comment.body}}
-                  <br/>
-                  <br/>
-                  <a href="{% url 'post-detail' post.id %}">To see full comments</a>
-                
-                {%endif%} -->
-                
-
-               
-
+                <p style="height: 100px; overflow: hidden; text-overflow: ellipsis;" class="article-content">{{ post.content }}</p>
+                <p><a href="{% url 'post-detail' post.id %}">[.....]</a></p> 
               </div> 
             </div>
   
@@ -62,13 +27,8 @@
         </article>
 
     
-      
-    {% endfor %}
     
-
-        
-
-
+    {% endfor %}
     {% if is_paginated %}
       {% if page_obj.has_previous %}
         <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
